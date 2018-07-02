@@ -71,7 +71,7 @@ public class OpenvcHelper {
             return null;
         }
     }
-
+//颜色对换 rbga - rgba
     public Bitmap BitmapRgbToBgr(Bitmap bitmap) {
         int width = bitmap.getWidth();
         int height = bitmap.getHeight();
