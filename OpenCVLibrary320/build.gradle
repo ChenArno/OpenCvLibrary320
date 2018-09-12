@@ -1,12 +1,12 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 25
     buildToolsVersion "27.0.3"
 
     defaultConfig {
         minSdkVersion 9
-        targetSdkVersion 27
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
 
@@ -19,12 +19,16 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
-
+    aaptOptions.cruncherEnabled = false
+    aaptOptions.useNewCruncher = false
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir 'src/main/libs'
     }
 
+    lintOptions{
+        disable'LongLogTag'
+    }
 //    externalNativeBuild {
 //        cmake {
 //            path "src/main/cpp/CMakeLists.txt"
@@ -37,6 +41,30 @@ dependencies {
     androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    implementation 'com.android.support:appcompat-v7:25.3.1'
+    implementation 'com.android.support:appcompat-v7:25.4.0'
     testImplementation 'junit:junit:4.12'
 }
+
+//================jar打包====================
+def SDK_BASENAME = "opencv";
+def sdkDestinationPath = "build";//生成jar存放目录
+def releaseJar = file('build/intermediates/packaged-classes/release/classes.jar')
+//打包debug目录下的classes.jar
+def debugJar = file('build/intermediates/packaged-classes/debug/classes.jar')
+
+task deleteBuild(type: Delete) {
+    delete sdkDestinationPath + SDK_BASENAME + ".jar" //sdk是你自己jar包的名字，随便命名
+}
+
+task makeJar(type: Jar) {
+    from zipTree(releaseJar)//从哪里打包class文件
+    exclude('**/BuildConfig.class')//排除不必要的class文件
+    baseName = SDK_BASENAME
+    destinationDir = file(sdkDestinationPath)
+}
+
+makeJar.dependsOn(deleteBuild, build)
+
+//运行脚本
+//1.命令行方式：在Terminal输入gradlew makeJar
+//2.图形界面方式：Gradle   :ModuleName Tasks   other   markJar
