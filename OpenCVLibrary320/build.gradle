@@ -8,7 +8,7 @@ android {
         minSdkVersion 9
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName "1.0.0"
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -19,13 +19,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    //用来关闭Android Studio的PNG合法性检查的，直接不让它检查。
     aaptOptions.cruncherEnabled = false
     aaptOptions.useNewCruncher = false
+
     sourceSets.main {
         jni.srcDirs = []
         jniLibs.srcDir 'src/main/libs'
     }
-
+//    关闭Long Log Tags检查通道
     lintOptions{
         disable'LongLogTag'
     }
@@ -58,7 +60,8 @@ task deleteBuild(type: Delete) {
 
 task makeJar(type: Jar) {
     from zipTree(releaseJar)//从哪里打包class文件
-    exclude('**/BuildConfig.class')//排除不必要的class文件
+//    from fileTree(dir:'src/main',includes:['assets/**'])
+//    exclude('**/BuildConfig.class')//排除不必要的class文件
     baseName = SDK_BASENAME
     destinationDir = file(sdkDestinationPath)
 }
@@ -68,3 +71,7 @@ makeJar.dependsOn(deleteBuild, build)
 //运行脚本
 //1.命令行方式：在Terminal输入gradlew makeJar
 //2.图形界面方式：Gradle   :ModuleName Tasks   other   markJar
+
+
+//aar打包
+apply from: 'maven-aar.gradle'

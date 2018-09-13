@@ -1,0 +1,25 @@
+//1、maven-插件
+apply plugin: 'maven'
+
+//2、maven-信息
+ext {
+    //ext is a gradle closure allowing
+    PUBLISH_GROUP_ID = 'com.vanz'
+    PUBLISH_ARTIFACT_ID = 'vanzOpencv'
+    PUBLISH_VERSION = android.defaultConfig.versionName
+}
+
+//3、maven-输出路径
+uploadArchives {
+    repositories.mavenDeployer {
+        //这里就是最后输出地址，把自己电脑上新建个文件夹，把文件夹路径粘贴在此
+        repository(url: "file:///Users/chen_arno/git/OpenCVLibrary320")
+        pom.project {
+            groupId project.PUBLISH_GROUP_ID
+            artifactId project.PUBLISH_ARTIFACT_ID
+            version project.PUBLISH_VERSION
+        }
+
+    }
+}
+
